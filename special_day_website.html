@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Anniversary My Love</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,800;1,400&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#050811',
+                        cardBg: 'rgba(13, 27, 42, 0.65)',
+                        accentBlue: '#00f0ff',
+                        deepBlue: '#0051ff',
+                        glowBlue: '#3b82f6',
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
+                    boxShadow: {
+                        'neon-glow': '0 0 25px rgba(0, 240, 255, 0.35)',
+                        'neon-card': '0 8px 32px 0 rgba(0, 150, 255, 0.2)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #050811;
+            color: #e2e8f0;
+            overflow-x: hidden;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        /* Canvas Particle Background */
+        #bgCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Glassmorphism Effect */
+        .glass-card {
+            background: rgba(10, 20, 38, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(0, 240, 255, 0.18);
+        }
+
+        .glass-card-hover {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-card-hover:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0, 240, 255, 0.5);
+            box-shadow: 0 10px 30px -5px rgba(0, 240, 255, 0.3);
+        }
+
+        /* Text Neon Glow */
+        .text-glow {
+            text-shadow: 0 0 15px rgba(0, 240, 255, 0.6), 0 0 30px rgba(0, 81, 255, 0.4);
+        }
+        
+        .text-glow-subtle {
+            text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+        }
+
+        /* Heartbeat Pulse Effect */
+        @keyframes heartPulse {
+            0% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(0, 240, 255, 0.6)); }
+            15% { transform: scale(1.25); filter: drop-shadow(0 0 20px rgba(0, 240, 255, 0.9)); }
+            30% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(0, 240, 255, 0.6)); }
+            45% { transform: scale(1.15); filter: drop-shadow(0 0 15px rgba(0, 240, 255, 0.8)); }
+            60% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(0, 240, 255, 0.6)); }
+            100% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(0, 240, 255, 0.6)); }
+        }
+
+        .heart-pulse {
+            animation: heartPulse 1.8s infinite ease-in-out;
+            cursor: pointer;
+        }
+
+        /* Floating Animation */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-12px); }
+        }
+
+        .floating {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        /* Particle bursting effect canvas element */
+        .burst-particle {
+            position: absolute;
+            pointer-events: none;
+            border-radius: 50%;
+            animation: burst 0.8s forwards ease-out;
+        }
+
+        @keyframes burst {
+            0% { opacity: 1; transform: translate(0, 0) scale(1); }
+            100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0); }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #050811;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00f0ff;
+        }
+    </style>
+</head>
+<body class="min-h-screen relative selection:bg-accentBlue selection:text-black">
+
+    <!-- Background Canvas for Stars & Neon Particles -->
+    <canvas id="bgCanvas"></canvas>
+
+    <!-- Main Container -->
+    <div class="max-w-6xl mx-auto px-4 py-8 md:py-16 relative z-10 space-y-20">
+
+        <!-- HERO SECTION -->
+        <section class="text-center space-y-6 pt-6 md:pt-10">
+            <!-- Top Tagline -->
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card border border-accentBlue/30 text-accentBlue text-xs md:text-sm font-semibold tracking-widest uppercase floating">
+                <i class="fa-solid fa-sparkles"></i> Celebration of Our Love Journey
+            </div>
+
+            <!-- Title -->
+            <h1 class="text-4xl sm:text-6xl md:text-7xl font-serif font-extrabold tracking-tight text-white leading-tight">
+                Happy <span class="bg-gradient-to-r from-accentBlue via-blue-400 to-deepBlue bg-clip-text text-transparent text-glow">Anniversary</span>
+            </h1>
+
+            <p class="max-w-2xl mx-auto text-slate-300 text-sm md:text-lg font-light leading-relaxed">
+                "Setiap detik bersamamu adalah cerita indah yang tak ingin pernah kuakhiri. Terima kasih telah menemani, mencintai, dan membuat hidupku punya warna cerah."
+            </p>
+
+            <!-- Couples Name -->
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 text-lg sm:text-2xl md:text-3xl font-serif font-semibold text-white pt-4">
+                <span class="border-b border-accentBlue/50 pb-1 text-center">Prasetyo Achmad Jatiwa</span>
+                <i class="fa-solid fa-heart text-accentBlue text-lg sm:text-2xl heart-pulse my-1 sm:my-0" id="centerHeart" onclick="createBurst(event)"></i>
+                <span class="border-b border-accentBlue/50 pb-1 text-center">Nabila Davina Shafa</span>
+            </div>
+
+            <!-- Interactive Live Counter -->
+            <div class="pt-8">
+                <p class="text-xs uppercase tracking-widest text-slate-400 font-medium mb-4">Kita telah bersama sejak 1 November 2025:</p>
+                <div class="flex flex-wrap justify-center gap-4 max-w-3xl mx-auto">
+                    
+                    <div class="glass-card glass-card-hover p-4 md:p-6 rounded-2xl text-center relative overflow-hidden group w-36 sm:w-40 flex-1 min-w-[130px] max-w-[170px]">
+                        <div class="absolute -top-10 -right-10 w-20 h-20 bg-accentBlue/10 rounded-full blur-xl group-hover:bg-accentBlue/30 transition-all"></div>
+                        <span id="days" class="block text-3xl sm:text-4xl md:text-5xl font-extrabold text-white text-glow">0</span>
+                        <span class="text-xs md:text-sm text-slate-400 font-medium uppercase mt-1 block">Hari</span>
+                    </div>
+
+                    <div class="glass-card glass-card-hover p-4 md:p-6 rounded-2xl text-center relative overflow-hidden group w-36 sm:w-40 flex-1 min-w-[130px] max-w-[170px]">
+                        <div class="absolute -top-10 -right-10 w-20 h-20 bg-accentBlue/10 rounded-full blur-xl group-hover:bg-accentBlue/30 transition-all"></div>
+                        <span id="hours" class="block text-3xl sm:text-4xl md:text-5xl font-extrabold text-white text-glow">0</span>
+                        <span class="text-xs md:text-sm text-slate-400 font-medium uppercase mt-1 block">Jam</span>
+                    </div>
+
+                    <div class="glass-card glass-card-hover p-4 md:p-6 rounded-2xl text-center relative overflow-hidden group w-36 sm:w-40 flex-1 min-w-[130px] max-w-[170px]">
+                        <div class="absolute -top-10 -right-10 w-20 h-20 bg-accentBlue/10 rounded-full blur-xl group-hover:bg-accentBlue/30 transition-all"></div>
+                        <span id="minutes" class="block text-3xl sm:text-4xl md:text-5xl font-extrabold text-white text-glow">0</span>
+                        <span class="text-xs md:text-sm text-slate-400 font-medium uppercase mt-1 block">Menit</span>
+                    </div>
+
+                    <div class="glass-card glass-card-hover p-4 md:p-6 rounded-2xl text-center relative overflow-hidden group w-36 sm:w-40 flex-1 min-w-[130px] max-w-[170px]">
+                        <div class="absolute -top-10 -right-10 w-20 h-20 bg-accentBlue/10 rounded-full blur-xl group-hover:bg-accentBlue/30 transition-all"></div>
+                        <span id="seconds" class="block text-3xl sm:text-4xl md:text-5xl font-extrabold text-accentBlue text-glow">0</span>
+                        <span class="text-xs md:text-sm text-slate-400 font-medium uppercase mt-1 block">Detik</span>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- SPECIAL MESSAGE SECTION FROM USER -->
+        <section class="glass-card p-6 md:p-12 rounded-3xl text-center relative overflow-hidden border border-accentBlue/30 shadow-neon-glow">
+            <div class="absolute -top-24 -left-24 w-48 h-48 bg-accentBlue/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-24 -right-24 w-48 h-48 bg-deepBlue/20 rounded-full blur-3xl pointer-events-none"></div>
+            
+            <div class="max-w-3xl mx-auto space-y-6 relative z-10">
+                <div class="inline-block p-3 rounded-full bg-accentBlue/10 border border-accentBlue/30 text-accentBlue mb-2">
+                    <i class="fa-solid fa-heart text-2xl heart-pulse"></i>
+                </div>
+
+                <h2 class="text-2xl md:text-4xl font-serif font-bold text-white tracking-wide">
+                    Surat Cinta Untukmu
+                </h2>
+                <div class="w-24 h-1 bg-gradient-to-r from-transparent via-accentBlue to-transparent mx-auto rounded-full"></div>
+
+                <blockquote class="text-base sm:text-lg md:text-xl font-light text-slate-200 leading-relaxed sm:leading-loose italic px-2 sm:px-6">
+                    "Terima kasih telah berusaha menjadi pendengar yang baik ketika aku butuh seseorang untuk menemani, pelukan hangat ketika aku lagi ngerasa gak baik baik aja, dan teman bertengkar yang nyebelin tapi ngangenin. Aku sadar bahwa kita bukan pasangan yang sempurna dan cocok di banyak hal tapi sampai titik ini aku bersyukur dan bangga kita berkembang menjadi pasangan yang punya pemahaman untuk berusaha memahami satu sama lain, aku berharap kita terus belajar mencintai lebih baik setiap harinya, menjaga agar setiap momen selanjutnya punya lebih banyak senyuman, dan terus berdampingan dalam keadaan sesulit apa pun."
+                </blockquote>
+
+                <div class="pt-4 text-accentBlue font-serif italic font-semibold text-lg">
+                    — From Your Man ❤️
+                </div>
+            </div>
+        </section>
+
+        <!-- INTERACTIVE HEART PULSE SOUND & BEAT SECTION -->
+        <section class="glass-card p-6 md:p-8 rounded-3xl text-center relative overflow-hidden">
+            <div class="max-w-xl mx-auto space-y-4">
+                <h3 class="text-lg md:text-xl font-semibold text-white">Ketuk Jantung Ini Untuk Mengirimkan Cinta</h3>
+                <p class="text-xs md:text-sm text-slate-400">Klik ikon di bawah untuk menyebarkan gelombang energi cinta neon!</p>
+                
+                <div class="py-6 flex justify-center">
+                    <div class="relative">
+                        <div class="absolute inset-0 rounded-full bg-accentBlue/20 blur-2xl"></div>
+                        <button id="heartPulseBtn" onclick="incrementLove(event)" class="relative z-10 w-24 h-24 rounded-full glass-card border border-accentBlue/40 flex items-center justify-center text-accentBlue text-4xl hover:scale-110 active:scale-95 transition-all shadow-neon-glow">
+                            <i class="fa-solid fa-heart text-glow"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="text-xs text-accentBlue/80 font-mono" id="loveClickCount">Total Cinta Terkirim: <span id="clickCounter">0</span> 💙</div>
+            </div>
+        </section>
+
+        <!-- REASONS WHY I LOVE YOU (GENERATOR) -->
+        <section class="space-y-6">
+            <div class="text-center space-y-2">
+                <h2 class="text-2xl md:text-4xl font-serif font-bold text-white">Alasan Mengapa Aku Mencintaimu</h2>
+                <p class="text-slate-400 text-sm">Ketuk tombol di bawah untuk melihat alasan spesial setiap harinya</p>
+            </div>
+
+            <div class="glass-card glass-card-hover p-8 md:p-10 rounded-3xl text-center max-w-2xl mx-auto relative">
+                <div class="text-accentBlue text-3xl mb-4">
+                    <i class="fa-solid fa-quote-left"></i>
+                </div>
+                <p id="reasonText" class="text-base md:text-xl font-medium text-slate-200 leading-relaxed min-h-[80px] flex items-center justify-center transition-all duration-300">
+                    "Kamu selalu punya cara sederhana untuk membuat hari yang buruk jadi terasa jauh lebih manis."
+                </p>
+                <div class="text-accentBlue text-3xl mt-4">
+                    <i class="fa-solid fa-quote-right"></i>
+                </div>
+
+                <div class="mt-8">
+                    <button id="nextReasonBtn" onclick="nextReason()" class="px-6 py-3 rounded-full bg-gradient-to-r from-accentBlue to-deepBlue text-black font-bold text-sm tracking-wide shadow-neon-glow hover:brightness-125 transition-all active:scale-95 flex items-center gap-2 mx-auto">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Alasan Lainnya
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- MEMORY TIMELINE & GALLERY (PERFECTLY BALANCED FLEX-GRID LAYOUT) -->
+        <section class="space-y-8">
+            <div class="text-center space-y-2">
+                <h2 class="text-2xl md:text-4xl font-serif font-bold text-white">Kenangan Indah Kita</h2>
+                <p class="text-slate-400 text-sm">Momen-momen berharga yang tersusun indah berdasarkan waktu</p>
+            </div>
+
+            <!-- Balanced Flex Container -->
+            <div class="flex flex-wrap justify-center gap-6">
+                <!-- 1. 04 Nov 2025 -->
+                <div class="glass-card glass-card-hover rounded-2xl overflow-hidden group w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] max-w-md flex flex-col">
+                    <div class="relative h-64 overflow-hidden bg-slate-900/50">
+                        <img src="https://raw.githubusercontent.com/pjatiwa-ux/Nama-gambar/main/IMG-20251104-WA0086%20(1).jpg" 
+                             onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'300\' viewBox=\'0 0 400 300\'><rect width=\'400\' height=\'300\' fill=\'%230a1426\'/><circle cx=\'200\' cy=\'130\' r=\'45\' fill=\'none\' stroke=\'%2300f0ff\' stroke-width=\'3\'/><path d=\'M200 110 Q210 95 225 110 T200 145 Q175 125 175 110 T200 110 Z\' fill=\'%2300f0ff\'/><text x=\'50%\' y=\'220\' text-anchor=\'middle\' fill=\'%2300f0ff\' font-family=\'sans-serif\' font-weight=\'bold\' font-size=\'16\'>Awal Cerita Manis Kita</text></svg>';" 
+                             alt="Awal Cerita Manis Kita" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-darkBg via-transparent to-transparent"></div>
+                        <span class="absolute bottom-3 left-4 text-xs font-semibold px-3 py-1 rounded-full glass-card text-accentBlue border border-accentBlue/30">📅 04 Nov 2025 • Momen Spesial</span>
+                    </div>
+                    <div class="p-5 space-y-2 flex-1 flex flex-col justify-between">
+                        <h3 class="text-lg font-bold text-white group-hover:text-accentBlue transition-colors">My Favorite Picture of Us</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed">Our First Trip to Dufan (Dunia Fantasi).</p>
+                    </div>
+                </div>
+
+                <!-- 2. 15 Feb 2026 -->
+                <div class="glass-card glass-card-hover rounded-2xl overflow-hidden group w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] max-w-md flex flex-col">
+                    <div class="relative h-64 overflow-hidden bg-slate-900/50">
+                        <img src="https://raw.githubusercontent.com/pjatiwa-ux/Nama-gambar/main/IMG-20260215-WA0028.jpg" 
+                             onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'300\' viewBox=\'0 0 400 300\'><rect width=\'400\' height=\'300\' fill=\'%230a1426\'/><circle cx=\'200\' cy=\'130\' r=\'45\' fill=\'none\' stroke=\'%2300f0ff\' stroke-width=\'3\'/><path d=\'M200 110 Q210 95 225 110 T200 145 Q175 125 175 110 T200 110 Z\' fill=\'%2300f0ff\'/><text x=\'50%\' y=\'220\' text-anchor=\'middle\' fill=\'%2300f0ff\' font-family=\'sans-serif\' font-weight=\'bold\' font-size=\'16\'>Bunga & Kejutan Manis</text></svg>';" 
+                             alt="Bunga & Kejutan Manis" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-darkBg via-transparent to-transparent"></div>
+                        <span class="absolute bottom-3 left-4 text-xs font-semibold px-3 py-1 rounded-full glass-card text-accentBlue border border-accentBlue/30">📅 15 Feb 2026 • Kejutan Romantis</span>
+                    </div>
+                    <div class="p-5 space-y-2 flex-1 flex flex-col justify-between">
+                        <h3 class="text-lg font-bold text-white group-hover:text-accentBlue transition-colors">My Favorite Picture of Us</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed">Celebrating our first Valentine's Day with the one who stole my heart.</p>
+                    </div>
+                </div>
+
+                <!-- 3. 15 Feb 2026 -->
+                <div class="glass-card glass-card-hover rounded-2xl overflow-hidden group w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] max-w-md flex flex-col">
+                    <div class="relative h-64 overflow-hidden bg-slate-900/50">
+                        <img src="https://raw.githubusercontent.com/pjatiwa-ux/Nama-gambar/main/IMG-20260215-WA0116.jpg" 
+                             onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'300\' viewBox=\'0 0 400 300\'><rect width=\'400\' height=\'300\' fill=\'%230a1426\'/><circle cx=\'200\' cy=\'130\' r=\'45\' fill=\'none\' stroke=\'%2300f0ff\' stroke-width=\'3\'/><path d=\'M200 110 Q210 95 225 110 T200 145 Q175 125 175 110 T200 110 Z\' fill=\'%2300f0ff\'/><text x=\'50%\' y=\'220\' text-anchor=\'middle\' fill=\'%2300f0ff\' font-family=\'sans-serif\' font-weight=\'bold\' font-size=\'16\'>Momen Pencapaian & Medali</text></svg>';" 
+                             alt="Momen Pencapaian & Medali" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-darkBg via-transparent to-transparent"></div>
+                        <span class="absolute bottom-3 left-4 text-xs font-semibold px-3 py-1 rounded-full glass-card text-accentBlue border border-accentBlue/30">📅 15 Feb 2026 • Pencapaian Spesial</span>
+                    </div>
+                    <div class="p-5 space-y-2 flex-1 flex flex-col justify-between">
+                        <h3 class="text-lg font-bold text-white group-hover:text-accentBlue transition-colors">My Favorite Picture of Us</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed">Brought home 1st place! Huge thanks to you for having my back the whole way.</p>
+                    </div>
+                </div>
+
+                <!-- 4. 22 Mar 2026 -->
+                <div class="glass-card glass-card-hover rounded-2xl overflow-hidden group w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] max-w-md flex flex-col">
+                    <div class="relative h-64 overflow-hidden bg-slate-900/50">
+                        <img src="https://raw.githubusercontent.com/pjatiwa-ux/Nama-gambar/main/IMG-20260322-WA0421.jpg" 
+                             onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'300\' viewBox=\'0 0 400 300\'><rect width=\'400\' height=\'300\' fill=\'%230a1426\'/><circle cx=\'200\' cy=\'130\' r=\'45\' fill=\'none\' stroke=\'%2300f0ff\' stroke-width=\'3\'/><path d=\'M200 110 Q210 95 225 110 T200 145 Q175 125 175 110 T200 110 Z\' fill=\'%2300f0ff\'/><text x=\'50%\' y=\'220\' text-anchor=\'middle\' fill=\'%2300f0ff\' font-family=\'sans-serif\' font-weight=\'bold\' font-size=\'16\'>Petualangan Indah Bersama</text></svg>';" 
+                             alt="Petualangan Indah Bersama" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-darkBg via-transparent to-transparent"></div>
+                        <span class="absolute bottom-3 left-4 text-xs font-semibold px-3 py-1 rounded-full glass-card text-accentBlue border border-accentBlue/30">📅 22 Mar 2026 • Jalan-Jalan</span>
+                    </div>
+                    <div class="p-5 space-y-2 flex-1 flex flex-col justify-between">
+                        <h3 class="text-lg font-bold text-white group-hover:text-accentBlue transition-colors">My Favorite Picture of Us</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed">Unlocking new places.</p>
+                    </div>
+                </div>
+
+                <!-- 5. 05 Mei 2026 -->
+                <div class="glass-card glass-card-hover rounded-2xl overflow-hidden group w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] max-w-md flex flex-col">
+                    <div class="relative h-64 overflow-hidden bg-slate-900/50">
+                        <img src="https://raw.githubusercontent.com/pjatiwa-ux/Nama-gambar/main/IMG-20260505-WA0334.jpg" 
+                             onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'300\' viewBox=\'0 0 400 300\'><rect width=\'400\' height=\'300\' fill=\'%230a1426\'/><circle cx=\'200\' cy=\'130\' r=\'45\' fill=\'none\' stroke=\'%2300f0ff\' stroke-width=\'3\'/><path d=\'M200 110 Q210 95 225 110 T200 145 Q175 125 175 110 T200 110 Z\' fill=\'%2300f0ff\'/><text x=\'50%\' y=\'220\' text-anchor=\'middle\' fill=\'%2300f0ff\' font-family=\'sans-serif\' font-weight=\'bold\' font-size=\'16\'>Senyuman Bahagia Berdua</text></svg>';" 
+                             alt="Senyuman Bahagia Berdua" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-darkBg via-transparent to-transparent"></div>
+                        <span class="absolute bottom-3 left-4 text-xs font-semibold px-3 py-1 rounded-full glass-card text-accentBlue border border-accentBlue/30">📅 05 Mei 2026 • Momen Indah</span>
+                    </div>
+                    <div class="p-5 space-y-2 flex-1 flex flex-col justify-between">
+                        <h3 class="text-lg font-bold text-white group-hover:text-accentBlue transition-colors">My Favorite Picture of Us</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed">Collecting another Victory.</p>
+                    </div>
+                </div>
+
+                <!-- 6. 29 Mei 2026 -->
+                <div class="glass-card glass-card-hover rounded-2xl overflow-hidden group w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] max-w-md flex flex-col">
+                    <div class="relative h-64 overflow-hidden bg-slate-900/50">
+                        <img src="https://raw.githubusercontent.com/pjatiwa-ux/Nama-gambar/main/IMG-20260529-WA0021.jpg" 
+                             onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'300\' viewBox=\'0 0 400 300\'><rect width=\'400\' height=\'300\' fill=\'%230a1426\'/><circle cx=\'200\' cy=\'130\' r=\'45\' fill=\'none\' stroke=\'%2300f0ff\' stroke-width=\'3\'/><path d=\'M200 110 Q210 95 225 110 T200 145 Q175 125 175 110 T200 110 Z\' fill=\'%2300f0ff\'/><text x=\'50%\' y=\'220\' text-anchor=\'middle\' fill=\'%2300f0ff\' font-family=\'sans-serif\' font-weight=\'bold\' font-size=\'16\'>Photobooth Manis</text></svg>';" 
+                             alt="Foto Photobooth Manis" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-darkBg via-transparent to-transparent"></div>
+                        <span class="absolute bottom-3 left-4 text-xs font-semibold px-3 py-1 rounded-full glass-card text-accentBlue border border-accentBlue/30">📅 29 Mei 2026 • Photobooth</span>
+                    </div>
+                    <div class="p-5 space-y-2 flex-1 flex flex-col justify-between">
+                        <h3 class="text-lg font-bold text-white group-hover:text-accentBlue transition-colors">My Favorite Picture of Us</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed">Favorite picture with my favorite person.</p>
+                    </div>
+                </div>
+
+                <!-- 7. 12 Jun 2026 -->
+                <div class="glass-card glass-card-hover rounded-2xl overflow-hidden group w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] max-w-md flex flex-col">
+                    <div class="relative h-64 overflow-hidden bg-slate-900/50">
+                        <img src="https://raw.githubusercontent.com/pjatiwa-ux/Nama-gambar/main/IMG-20260612-WA0209.jpg" 
+                             onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'300\' viewBox=\'0 0 400 300\'><rect width=\'400\' height=\'300\' fill=\'%230a1426\'/><circle cx=\'200\' cy=\'130\' r=\'45\' fill=\'none\' stroke=\'%2300f0ff\' stroke-width=\'3\'/><path d=\'M200 110 Q210 95 225 110 T200 145 Q175 125 175 110 T200 110 Z\' fill=\'%2300f0ff\'/><text x=\'50%\' y=\'220\' text-anchor=\'middle\' fill=\'%2300f0ff\' font-family=\'sans-serif\' font-weight=\'bold\' font-size=\'16\'>Menikmati Waktu Santai</text></svg>';" 
+                             alt="Menikmati Waktu Santai" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-darkBg via-transparent to-transparent"></div>
+                        <span class="absolute bottom-3 left-4 text-xs font-semibold px-3 py-1 rounded-full glass-card text-accentBlue border border-accentBlue/30">📅 12 Jun 2026 • Kebersamaan</span>
+                    </div>
+                    <div class="p-5 space-y-2 flex-1 flex flex-col justify-between">
+                        <h3 class="text-lg font-bold text-white group-hover:text-accentBlue transition-colors">My Favorite Picture of Us</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed">Movie date: Colony & you.</p>
+                    </div>
+                </div>
+
+                <!-- 8. 09 Ags 2026 -->
+                <div class="glass-card glass-card-hover rounded-2xl overflow-hidden group w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] max-w-md flex flex-col">
+                    <div class="relative h-64 overflow-hidden bg-slate-900/50">
+                        <img src="https://raw.githubusercontent.com/pjatiwa-ux/Nama-gambar/main/IMG-20260809-WA0035.jpg" 
+                             onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'300\' viewBox=\'0 0 400 300\'><rect width=\'400\' height=\'300\' fill=\'%230a1426\'/><circle cx=\'200\' cy=\'130\' r=\'45\' fill=\'none\' stroke=\'%2300f0ff\' stroke-width=\'3\'/><path d=\'M200 110 Q210 95 225 110 T200 145 Q175 125 175 110 T200 110 Z\' fill=\'%2300f0ff\'/><text x=\'50%\' y=\'220\' text-anchor=\'middle\' fill=\'%2300f0ff\' font-family=\'sans-serif\' font-weight=\'bold\' font-size=\'16\'>Wisata Kuliner & Canda Tawa</text></svg>';" 
+                             alt="Wisata Kuliner & Canda Tawa" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-darkBg via-transparent to-transparent"></div>
+                        <span class="absolute bottom-3 left-4 text-xs font-semibold px-3 py-1 rounded-full glass-card text-accentBlue border border-accentBlue/30">📅 09 Ags 2026 • Wisata Kuliner</span>
+                    </div>
+                    <div class="p-5 space-y-2 flex-1 flex flex-col justify-between">
+                        <h3 class="text-lg font-bold text-white group-hover:text-accentBlue transition-colors">My Favorite Picture of Us</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed">Enjoy a culinary date in Blok M.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER / FINAL MESSAGE -->
+        <footer class="text-center pt-8 border-t border-slate-800/80 space-y-3">
+            <p class="text-slate-400 text-sm">Created with endless love for <span class="text-accentBlue font-medium">Nabila Davina Shafa</span></p>
+            <p class="text-xs text-slate-600">Prasetyo Achmad Jatiwa &copy; 2025 - Forever & Always</p>
+        </footer>
+
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // 1. Live Countdown Counter set to November 1, 2025
+        const startDate = new Date('2025-11-01T00:00:00');
+
+        function updateCounter() {
+            const now = new Date();
+            const diff = Math.max(0, now - startDate); // Elapsed time in ms
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((diff / (1000 * 60)) % 60);
+            const seconds = Math.floor((diff / 1000) % 60);
+
+            document.getElementById('days').innerText = days;
+            document.getElementById('hours').innerText = hours;
+            document.getElementById('minutes').innerText = minutes;
+            document.getElementById('seconds').innerText = seconds;
+        }
+
+        setInterval(updateCounter, 1000);
+        updateCounter();
+
+        // 2. Interactive Love Button Counter & Burst Effect
+        let loveCount = 0;
+        function incrementLove(e) {
+            loveCount++;
+            document.getElementById('clickCounter').innerText = loveCount;
+            createBurst(e);
+        }
+
+        function createBurst(e) {
+            const container = document.body;
+            const x = e.clientX || window.innerWidth / 2;
+            const y = e.clientY || window.innerHeight / 2;
+
+            for (let i = 0; i < 15; i++) {
+                const p = document.createElement('div');
+                p.className = 'burst-particle';
+                
+                const size = Math.random() * 10 + 6;
+                p.style.width = `${size}px`;
+                p.style.height = `${size}px`;
+                p.style.backgroundColor = i % 2 === 0 ? '#00f0ff' : '#3b82f6';
+                p.style.left = `${x}px`;
+                p.style.top = `${y}px`;
+                p.style.boxShadow = '0 0 10px #00f0ff';
+
+                const tx = (Math.random() - 0.5) * 160;
+                const ty = (Math.random() - 0.5) * 160;
+                p.style.setProperty('--tx', `${tx}px`);
+                p.style.setProperty('--ty', `${ty}px`);
+
+                container.appendChild(p);
+
+                setTimeout(() => {
+                    p.remove();
+                }, 800);
+            }
+        }
+
+        // 3. Reasons Array Generator
+        const loveReasons = [
+            "Kamu selalu punya cara sederhana untuk membuat hari yang buruk jadi terasa jauh lebih manis.",
+            "Pelukan hangatmu selalu berhasil meredakan segudang rasa lelah dan cemas.",
+            "Senyumanmu adalah tempat terbaik untuk pulang di akhir hari.",
+            "Meskipun kadang suka bertengkar karena hal kecil, kita selalu bisa kembali tertawa bersama.",
+            "Terima kasih telah selalu berusaha memahami dan melengkapi kekuranganku.",
+            "Bersamamu, aku belajar menjadi versi diriku yang lebih baik setiap harinya.",
+            "Ketawa dan candaanmu adalah musik terindah yang pernah kudengar."
+        ];
+
+        let reasonIndex = 0;
+        function nextReason() {
+            reasonIndex = (reasonIndex + 1) % loveReasons.length;
+            const reasonText = document.getElementById('reasonText');
+            
+            reasonText.style.opacity = '0';
+            reasonText.style.transform = 'translateY(10px)';
+
+            setTimeout(() => {
+                reasonText.innerText = `"${loveReasons[reasonIndex]}"`;
+                reasonText.style.opacity = '1';
+                reasonText.style.transform = 'translateY(0)';
+            }, 300);
+        }
+
+        // 4. Background Canvas Particle System
+        const canvas = document.getElementById('bgCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let particles = [];
+        const particleCount = 65;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.radius = Math.random() * 2 + 0.5;
+                this.vx = (Math.random() - 0.5) * 0.4;
+                this.vy = (Math.random() - 0.5) * 0.4;
+                this.alpha = Math.random() * 0.7 + 0.3;
+                this.color = Math.random() > 0.3 ? '#00f0ff' : '#0051ff';
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.alpha;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = this.color;
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        for (let i = 0; i < particleCount; i++) {
+            particles.push(new Particle());
+        }
+
+        function animateBg() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw faint glowing nebula background
+            const grad = ctx.createRadialGradient(canvas.width / 2, canvas.height / 2, 50, canvas.width / 2, canvas.height / 2, canvas.width * 0.7);
+            grad.addColorStop(0, 'rgba(0, 81, 255, 0.07)');
+            grad.addColorStop(1, 'rgba(5, 8, 17, 0)');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+
+            requestAnimationFrame(animateBg);
+        }
+
+        window.onload = function() {
+            animateBg();
+        };
+    </script>
+</body>
+</html>
